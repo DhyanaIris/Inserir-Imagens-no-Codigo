@@ -1,13 +1,19 @@
 import React, { createContext, useState } from "react";
 
-export const Context = createContext(null)
 
-export default ({ children }) => {
+export const ImageContext = createContext({
+    images: {},
+    setImages: () => {}
+})
+
+export const ImageProvider = ({ children }) => {
     const [images, setImages] = useState([]);
 
-    const store = {
-        images: [images, setImages],
-    }
-
-    return <Context.Provider value={store}>{children}</Context.Provider>
+    return (
+        <ImageContext.Provider value={{images, setImages}}>
+            {children}
+        </ImageContext.Provider>
+    )
 }
+
+export default ImageProvider;

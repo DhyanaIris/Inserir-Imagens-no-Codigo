@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
-import { Context } from '../context/useContext';
+import { ImageContext } from '../context/useContext';
 import './modal.css';
 
 export default function Modal({isOpen, isClose, children}) {
-    const { setImages } = useContext(Context)
+    const { setImages } = useContext(ImageContext)
 
     const dragEvents = {
         onDragEnter:(e) => {
@@ -22,11 +22,27 @@ export default function Modal({isOpen, isClose, children}) {
             e.preventDefault();
             console.log("onDrop");
             const files = Array.from(e.dataTransfer.files);
-            const images = files.map((file) => {
+            // Usando FileReader
+            files.map((file) => {
                 const {name, size} = file;
-                return {name, size, preview: URL.createObjectURL(file)};
-            })
-            setImages(images);
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = () => {
+                    const preview = reader.result;
+                    const image = { name, size, preview };
+                    setImages((prevImages) => {
+                        return [...prevImages, image];
+                    });
+                };
+                return null;
+            });
+
+            // Usando URL Create Object URL
+            // const images = files.map((file) => {
+            //     const {name, size} = file;
+            //     return {name, size, preview: URL.createObjectURL(file)};
+            // })
+            // setImages(images);
         }
     };
 
